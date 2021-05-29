@@ -7,12 +7,12 @@ const gulp = require("gulp");
 const imagemin = require("gulp-imagemin");
 const newer = require("gulp-newer");
 const plumber = require("gulp-plumber");
+const concat = require('gulp-concat');
 const rename = require("gulp-rename");
 const sass = require("gulp-sass");
-const webpack = require("webpack");
-const webpackconfig = require("./config/webpack.config.js");
-const webpackstream = require("webpack-stream");
 const autoPrefixer = require("gulp-autoprefixer");
+const minifyCSS = require("gulp-minify-css");
+const minifyJS = require("gulp-minify");
 
 const env = {
     server: {
@@ -34,12 +34,20 @@ const env = {
             dest: './'
         },
         js: {
-            src: ['./dist/js/**/*.js'],
+            src: './dist/js/**/*.js',
             dest: './public/js'
         },
         images: {
             src: ['./dist/images/**/*'],
             dest: './public/images'
+        },
+        jsLibraries: {
+            jquery: {
+                src: './node_modules/jquery/dist/jquery.min.js'
+            },
+            bootstrap: {
+                src: './node_modules/bootstrap/dist/js/bootstrap.min.js'
+            }
         }
     }
 }
@@ -99,6 +107,7 @@ function css() {
     .pipe(gulp.dest(env.paths.sass.dest))
     .pipe(rename({ suffix: ".min" }))
     .pipe(autoPrefixer())
+    .pipe(minifyCSS())
     .pipe(gulp.dest(env.paths.sass.dest))
     .pipe(browsersync.stream());
 }
@@ -107,9 +116,13 @@ function css() {
 function scripts() {
   return (
     gulp
-      .src(env.paths.js.src)
-      .pipe(plumber())
-      .pipe(webpackstream(webpackconfig, webpack))
+      .src([
+          env.paths.js.src,
+          env.paths.jsLibraries.jquery.src,
+          env.paths.jsLibraries.bootstrap.src
+      ])
+      .pipe(concat('main.js'))
+      .pipe(minifyJS())
       // folder only, filename is specified in webpack config
       .pipe(gulp.dest(env.paths.js.dest))
       .pipe(browsersync.stream())
