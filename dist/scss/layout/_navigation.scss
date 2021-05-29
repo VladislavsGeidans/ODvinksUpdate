@@ -1,0 +1,13 @@
+a {
+    display: block;
+    font-size: $font-size-medium;
+    color: $color-green-5;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: .3s;
+    padding: 4px 12px;
+
+    &:hover {
+        color: $color-white; 
+    }
+}
