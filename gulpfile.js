@@ -27,7 +27,7 @@ const env = {
     paths: {
         sass: {
             src: ['./dist/scss/**/*.scss'],
-            dest: './public/css'
+            dest: './public/css/'
         },
         html: {
             src: ['./*.html'],
@@ -35,11 +35,15 @@ const env = {
         },
         js: {
             src: './dist/js/**/*.js',
-            dest: './public/js'
+            dest: './public/js/'
         },
         images: {
             src: ['./dist/images/**/*'],
-            dest: './public/images'
+            dest: './public/images/'
+        },
+        fonts: {
+            src: './node_modules/@fontawesome/fontawesome-free/webfonts/**',
+            dest: './public/fonts/'
         },
         jsLibraries: {
             jquery: {
@@ -117,8 +121,8 @@ function scripts() {
   return (
     gulp
       .src([
-          env.paths.js.src,
           env.paths.jsLibraries.jquery.src,
+          env.paths.js.src,
           env.paths.jsLibraries.bootstrap.src
       ])
       .pipe(concat('main.js'))
@@ -127,6 +131,14 @@ function scripts() {
       .pipe(gulp.dest(env.paths.js.dest))
       .pipe(browsersync.stream())
   );
+}
+
+function fonts() {
+    return (
+        gulp
+            .src([env.paths.fonts.src])
+            .pipe(gulp.dest(env.paths.fonts.dest))
+    );
 }
 
 // Watch files
@@ -139,13 +151,14 @@ function watchFiles() {
 
 // define complex tasks
 const js = gulp.series(scripts);
-const build = gulp.series(clean, gulp.parallel(css, images, js));
+const build = gulp.series(clean, gulp.parallel(css, images, js, fonts));
 const watch = gulp.parallel(watchFiles, browserSync);
 
 // export tasks
 exports.images = images;
 exports.css = css;
 exports.js = js;
+exports.fonts = fonts;
 exports.clean = clean;
 exports.build = build;
 exports.watch = watch;
