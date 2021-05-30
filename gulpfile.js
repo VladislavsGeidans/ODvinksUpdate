@@ -20,7 +20,7 @@ const env = {
         port: 3000,
         config: {
             jshint: {
-                src: './config/.jshintrc'
+                src: './dist/config/.jshintrc'
             }
         }
     },
